@@ -29,7 +29,7 @@ public class ProductService {
         Product product = productRepository.findById(id).orElseThrow(() ->
                 new NullPointerException("해당 상품을 찾을 수 없습니다."));
 
-        product.setMyprice(myprice);
+        product.update(requestDto);
 
         return new ProductResponseDto(product);
     }
