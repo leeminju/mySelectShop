@@ -37,4 +37,12 @@ public class ProductController {
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return productService.getProducts(userDetails.getUser(), page - 1, size, sortBy, isAsc);//client page 1부터 시작, server는 0부터 시작
     }
+
+    @PostMapping("/products/{productId}/folder")
+    public void addFolder(
+            @PathVariable Long productId,
+            @RequestParam Long folderId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        productService.addFolder(productId,folderId,userDetails.getUser());
+    }
 }
