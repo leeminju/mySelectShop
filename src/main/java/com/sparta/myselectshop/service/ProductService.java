@@ -77,25 +77,38 @@ public class ProductService {
     public void addFolder(Long productId, Long folderId, User user) {
         //1. 상품 조회
         Product product = productRepository.findById(productId).orElseThrow(()
-                ->new NullPointerException("해당 상품이 존재 하지 않습니다."));
+                -> new NullPointerException("해당 상품이 존재 하지 않습니다."));
 
         //2. 폴더 조회
         Folder folder = folderRepository.findById(folderId).orElseThrow(()
-                ->new NullPointerException("해당 폴더가 존재 하지 않습니다."));
+                -> new NullPointerException("해당 폴더가 존재 하지 않습니다."));
 
         //3. 조회한 폴더와 상픔이 모두 로그인한 회원 소유인지 확인!
-        if(!product.getUser().getId().equals(user.getId()) ||
-            !folder.getUser().getId().equals(user.getId())){
+        if (!product.getUser().getId().equals(user.getId()) ||
+                !folder.getUser().getId().equals(user.getId())) {
             throw new IllegalArgumentException("회원님의 관심상품이 아니거나, 회원님의 폴더가 아닙니다.");
         }
         // 4. 중복 확인(이미 등록된 폴더에 다시 등록)
-        Optional<ProductFolder>  overlapFolder=productFolderRepository.findByProductAndFolder(product,folder);
+        Optional<ProductFolder> overlapFolder = productFolderRepository.findByProductAndFolder(product, folder);
 
-        if(overlapFolder.isPresent()){
+        if (overlapFolder.isPresent()) {
             throw new IllegalArgumentException("중복된 폴더입니다.");
         }
 
-        productFolderRepository.save(new ProductFolder(product,folder));
+        productFolderRepository.save(new ProductFolder(product, folder));
     }
 
+    public Page<ProductResponseDto> getProductsInFolder(Long folderId, int page, int size, String sortBy, boolean isAsc, User user) {
+        //페이징 처리
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        //해당 폴더에 등록된 상품 조회
+        Page<Product> products = productRepository.findAllByUserAndProductFolderList_FolderId(user, folderId, pageable);
+
+        Page<ProductResponseDto> responseDtoList = products.map(ProductResponseDto::new);
+
+        return responseDtoList;
+    }
 }
