@@ -30,7 +30,7 @@ public class FolderService {
                 folderList.add(folder);
             } else {
                 // 중복된 이름 하나라도 존재하면 -> 오류
-                throw new IllegalArgumentException("폴더명이 중복되었습니다.");
+                throw new IllegalArgumentException("중복된 폴더명을 제거해 주세요! 폴더명: "+folderName);
             }
         }
 

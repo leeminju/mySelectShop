@@ -295,7 +295,8 @@ function addFolder() {
         window.location.reload();
     })
         .fail(function(xhr, textStatus, errorThrown) {
-            alert("중복된 폴더입니다.");
+            alert(xhr.responseJSON.errorMessage);
+            console.log(xhr.status)
         });
 }
 
@@ -370,7 +371,8 @@ function addInputForProductToFolder(productId, button) {
                     window.location.reload();
                 })
                     .fail(function(xhr, textStatus, errorThrown) {
-                        alert("중복된 폴더입니다.");
+                        alert(xhr.responseJSON.errorMessage);
+                        console.log(xhr.status)
                     });
             });
         },
@@ -428,6 +430,7 @@ function logout() {
 }
 
 function getToken() {
+
     let auth = Cookies.get('Authorization');
 
     if(auth === undefined) {
