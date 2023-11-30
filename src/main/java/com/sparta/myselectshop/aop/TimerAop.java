@@ -14,27 +14,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-@Slf4j(topic = "UseTimeAop")
+@Slf4j(topic = "TimerAop")
 @Aspect
-//@Component
+@Component
 @RequiredArgsConstructor
-public class UseTimeAop {
+public class TimerAop {
 
     private final ApiUseTimeRepository apiUseTimeRepository;
 
-    @Pointcut("execution(* com.sparta.myselectshop.controller.ProductController.*(..))")
-    private void product() {
-    }
+    @Pointcut("@annotation(com.sparta.myselectshop.aop.Timer)")
+    private void enableTimer(){}
 
-    @Pointcut("execution(* com.sparta.myselectshop.controller.FolderController.*(..))")
-    private void folder() {
-    }
-
-    @Pointcut("execution(* com.sparta.myselectshop.naver.controller.NaverApiController.*(..))")
-    private void naver() {
-    }
-
-    @Around("product() || folder() || naver()")
+    @Around("enableTimer()")
     public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
         // 측정 시작 시간
         long startTime = System.currentTimeMillis();
